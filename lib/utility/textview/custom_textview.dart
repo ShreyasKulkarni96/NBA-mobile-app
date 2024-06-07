@@ -25,6 +25,7 @@ class CustomTextViewState extends State<CustomTextView> {
         style: TextStyle(
             fontWeight: widget.fontWeight ?? FontWeight.w400,
             fontSize: widget.fontSize ?? 19.0,
+
             color: widget.color ?? Theme.of(context).primaryColor,
             fontFamily: 'Inter'));
   }

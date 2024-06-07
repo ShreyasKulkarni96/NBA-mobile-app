@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nbp/gamesDetailsScreen.dart';
 import 'package:nbp/shimmerpage.dart';
 import 'package:nbp/utility/colors.dart';
 import 'package:nbp/utility/textview/custom_textview.dart';
@@ -398,7 +399,11 @@ class _GamesScreenState extends State<GamesScreen>
       child: ListView.builder(
           itemCount: gamesList.length,
           itemBuilder: (context, index) {
-            return Container(
+            return InkWell(onTap:() {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GamesDetailsScreen()));
+
+
+            },child: Container(
               color: grayBgColor,
               margin: EdgeInsets.only(
                   top: 10.0, left: 30.0, right: 30.0, bottom: 5.0),
@@ -444,7 +449,9 @@ class _GamesScreenState extends State<GamesScreen>
                   )
                 ],
               ),
-            );
+            )  ,)
+
+             ;
           }),
     );
   }
