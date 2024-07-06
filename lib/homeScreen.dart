@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nbp/statsDetailsScreen.dart';
 import 'package:nbp/utility/colors.dart';
 import 'package:nbp/utility/textview/custom_textview.dart';
 
@@ -13,22 +14,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 1;
 
-  static  final List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     CustomTextView(
-      title: 'TEAMS',
-      fontSize: 35.0,
-      fontWeight: FontWeight.bold,
-        color:Colors.black,
-        textAlign:TextAlign.center
-    ),
-    GamesScreen(),
-    CustomTextView(
-        title: 'STATS',
+        title: 'TEAMS',
         fontSize: 35.0,
         fontWeight: FontWeight.bold,
-        color:Colors.black,
-        textAlign:TextAlign.center
-    ),
+        color: Colors.black,
+        textAlign: TextAlign.center),
+    GamesScreen(),
+    StatssDetailsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -40,7 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -57,21 +50,20 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: SizedBox.shrink(),
             label: 'STATS',
-
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: blackTextColor,
         selectedLabelStyle: TextStyle(
-          fontSize: 20,
-          fontFamily: 'Inter',
-          color: blackTextColor,
-          fontWeight: FontWeight.w500),
-        unselectedLabelStyle:TextStyle(
+            fontSize: 20,
+            fontFamily: 'Inter',
+            color: blackTextColor,
+            fontWeight: FontWeight.w500),
+        unselectedLabelStyle: TextStyle(
             fontSize: 20,
             fontFamily: 'Inter',
             color: grayBgColor,
-            fontWeight: FontWeight.w500) ,
+            fontWeight: FontWeight.w500),
         onTap: _onItemTapped,
       ),
     );

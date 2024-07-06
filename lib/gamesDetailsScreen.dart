@@ -645,7 +645,7 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                     SizedBox(
                       height: 10,
                     ),
-                    PlayersStatsTable1()
+                    PlayersStatsTable()
                   ],
                 ),
               ),
@@ -654,6 +654,349 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
   }
 }
 
+class PlayersStatsTable extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        // decoration: BoxDecoration(
+        //   color: lightGrayBgColor,
+        // ),
+        border: TableBorder.all(color: Colors.grey.shade600),
+        dataRowColor: MaterialStateProperty.all(Colors.white),
+        headingRowColor: MaterialStateProperty.all(lightGrayBgColor),
+        columns: const [
+          DataColumn(
+              label: Text(
+            'STARTERS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'MIN',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'PTS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'REB',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'AST',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'STL',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+        ],
+        rows: const [
+          DataRow(cells: [
+            DataCell(Text(
+              'T. Brown Jr.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '22:35',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '0',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '3',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '0',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '2',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+          ]),
+          DataRow(cells: [
+            DataCell(Text(
+              'C. Metu',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '34:46',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '7',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '11',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '2',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '0',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+          ]),
+          DataRow(cells: [
+            DataCell(Text(
+              'J. Duren',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text(
+              '27:32',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11.5,
+                  color: Colors.black,
+                  fontFamily: 'Inter'),
+            )),
+            DataCell(Text('15',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('11',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('2',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('0',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+          ]),
+          DataRow(cells: [
+            DataCell(Text('J. Ivey',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('31:46',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('25',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('5',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('4',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('0',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+          ]),
+          DataRow(cells: [
+            DataCell(Text('M. Sasser',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('26:50',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('10',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('3',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('5',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('0',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+          ]),
+        ],
+      ),
+    );
+  }
+
+  Widget tableCell(String content) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        content,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 11.5,
+            color: Colors.black,
+            fontFamily: 'Inter'),
+      ),
+    );
+  }
+}
 
 class PlayersStatsTable1 extends StatelessWidget {
   @override
@@ -664,43 +1007,42 @@ class PlayersStatsTable1 extends StatelessWidget {
         final columnWidth1 = (constraints.maxWidth - 16) / 3;
         final columnWidth2 = (constraints.maxWidth - 16) / 6;
 
-        return
-
-          Column(children: [
+        return Column(
+          children: [
             Padding(
-            padding: const EdgeInsets.fromLTRB(0, 5.0, 0, 1),
-            child: Table(
-              columnWidths: {
-                0: FixedColumnWidth(columnWidth1),
-                1: FixedColumnWidth(columnWidth2),
-                2: FixedColumnWidth(columnWidth),
-                3: FixedColumnWidth(columnWidth),
-                4: FixedColumnWidth(columnWidth),
-                5: FixedColumnWidth(columnWidth),
-              },
-              border: TableBorder.all(color: Colors.grey.shade300),
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(
-                    color: lightGrayBgColor,
+              padding: const EdgeInsets.fromLTRB(0, 5.0, 0, 1),
+              child: Table(
+                columnWidths: {
+                  0: FixedColumnWidth(columnWidth1),
+                  1: FixedColumnWidth(columnWidth2),
+                  2: FixedColumnWidth(columnWidth),
+                  3: FixedColumnWidth(columnWidth),
+                  4: FixedColumnWidth(columnWidth),
+                  5: FixedColumnWidth(columnWidth),
+                },
+                border: TableBorder.all(color: Colors.grey.shade300),
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(
+                      color: lightGrayBgColor,
+                    ),
+                    children: [
+                      tableCell('STARTERS'),
+                      tableCell('MIN'),
+                      tableCell('PTS'),
+                      tableCell('REB'),
+                      tableCell('AST'),
+                      tableCell('STL'),
+                    ],
                   ),
-                  children: [
-                    tableCell('STARTERS'),
-                    tableCell('MIN'),
-                    tableCell('PTS'),
-                    tableCell('REB'),
-                    tableCell('AST'),
-                    tableCell('STL'),
-                  ],
-                ),
-                tableRow('T. Brown Jr.',' SF', '22:35', '0', '3', '0', '2'),
-                tableRow('C. Metu',' PF', '34:46', '7', '11', '2', '0'),
-                tableRow('J. Duren',' C', '27:32', '15', '11', '2', '0'),
-                tableRow('J. Ivey',' SG', '31:46', '25', '5', '4', '0'),
-                tableRow('M. Sasser',' PG', '26:50', '10', '3', '5', '0'),
-              ],
+                  tableRow('T. Brown Jr.', ' SF', '22:35', '0', '3', '0', '2'),
+                  tableRow('C. Metu', ' PF', '34:46', '7', '11', '2', '0'),
+                  tableRow('J. Duren', ' C', '27:32', '15', '11', '2', '0'),
+                  tableRow('J. Ivey', ' SG', '31:46', '25', '5', '4', '0'),
+                  tableRow('M. Sasser', ' PG', '26:50', '10', '3', '5', '0'),
+                ],
+              ),
             ),
-          ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0.0, 0, 8),
               child: Table(
@@ -727,29 +1069,27 @@ class PlayersStatsTable1 extends StatelessWidget {
                       tableCell('STL'),
                     ],
                   ),
-                  tableRow('J. Wiseman',' ', '20:28', '8', '6', '2', '0'),
-                  tableRow('J. Rhoden',' ', '14:40', '2', '1', '0', '0'),
-                  tableRow('M. Flynn',' ', '21:10', '12', '0', '4', '0'),
-                  tableRow('E. Fournier',' ', '26:21', '21', '3', '0', '1'),
-                  tableRow('J. Nowell',' ', '10:27', '2', '1', '1', '0'),
-                  tableRow('B. Boeheim',' ', '03:25', '0', '0', '0', '0'),
-
-
-
+                  tableRow('J. Wiseman', ' ', '20:28', '8', '6', '2', '0'),
+                  tableRow('J. Rhoden', ' ', '14:40', '2', '1', '0', '0'),
+                  tableRow('M. Flynn', ' ', '21:10', '12', '0', '4', '0'),
+                  tableRow('E. Fournier', ' ', '26:21', '21', '3', '0', '1'),
+                  tableRow('J. Nowell', ' ', '10:27', '2', '1', '1', '0'),
+                  tableRow('B. Boeheim', ' ', '03:25', '0', '0', '0', '0'),
                 ],
               ),
-            )],)
-          ;
+            )
+          ],
+        );
       },
     );
   }
 
-  TableRow tableRow(
-      String name,String name2, String min, String pts, String reb, String ast, String stl) {
+  TableRow tableRow(String name, String name2, String min, String pts,
+      String reb, String ast, String stl) {
     return TableRow(
       decoration: BoxDecoration(color: Colors.white),
       children: [
-        tableCell1(name,name2),
+        tableCell1(name, name2),
         tableCell(min),
         tableCell(pts),
         tableCell(reb),
@@ -801,5 +1141,3 @@ class PlayersStatsTable1 extends StatelessWidget {
     );
   }
 }
-
-
