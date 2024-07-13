@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nbp/statsDetailsScreen.dart';
+import 'package:nbp/teamsScreen.dart';
 import 'package:nbp/utility/colors.dart';
 import 'package:nbp/utility/textview/custom_textview.dart';
 
@@ -15,12 +16,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 1;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    CustomTextView(
-        title: 'TEAMS',
-        fontSize: 35.0,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-        textAlign: TextAlign.center),
+    TeamsScreen(),
     GamesScreen(),
     StatssDetailsScreen(),
   ];

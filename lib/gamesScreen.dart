@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:nbp/gamesDetailsScreen.dart';
 import 'package:nbp/shimmerpage.dart';
+import 'package:nbp/utility/HelperClass.dart';
 import 'package:nbp/utility/colors.dart';
 import 'package:nbp/utility/textview/custom_textview.dart';
-import 'package:shimmer/shimmer.dart';
+
+import 'CONSTANTS.dart';
 
 class GamesScreen extends StatefulWidget {
   @override
@@ -288,9 +292,8 @@ class _GamesScreenState extends State<GamesScreen>
     super.initState();
     // Initialise Tab Controller
     tabController = TabController(length: 3, vsync: this, initialIndex: 1);
-    tabController.addListener((){
-      tabController.index=1;
-
+    tabController.addListener(() {
+      tabController.index = 1;
     });
     Loading();
   }
@@ -299,10 +302,6 @@ class _GamesScreenState extends State<GamesScreen>
     _timer = Timer(Duration(seconds: 3), () {
       setState(() {
         isLoading = false;
-
-
-
-
       });
     });
   }
@@ -372,25 +371,23 @@ class _GamesScreenState extends State<GamesScreen>
 
   Widget GamesYesterdaysListWidegt() {
     return Center(
-      child:  CustomTextView(
+      child: CustomTextView(
           title: 'coming soon',
           fontSize: 20.0,
           fontWeight: FontWeight.w300,
-          color:Colors.black,
-          textAlign:TextAlign.center
-      ),
+          color: Colors.black,
+          textAlign: TextAlign.center),
     );
   }
 
   Widget GamesTomarrowListWidegt() {
     return Center(
-     child: CustomTextView(
+      child: CustomTextView(
           title: 'coming soon',
           fontSize: 20.0,
           fontWeight: FontWeight.w300,
-          color:Colors.black,
-          textAlign:TextAlign.center
-      ),
+          color: Colors.black,
+          textAlign: TextAlign.center),
     );
   }
 
@@ -399,60 +396,151 @@ class _GamesScreenState extends State<GamesScreen>
       child: ListView.builder(
           itemCount: gamesList.length,
           itemBuilder: (context, index) {
-            return InkWell(onTap:() {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GamesDetailsScreen()));
-
-
-            },child: Container(
-              color: grayBgColor,
-              margin: EdgeInsets.only(
-                  top: 10.0, left: 30.0, right: 30.0, bottom: 5.0),
-              padding: EdgeInsets.all(20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: lightGrayBgColor,
-                        shape: BoxShape.rectangle,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10),
-                        )),
-                    padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    child: Image.asset(
-                      "assets/image/team3.png",
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.fill,
+            return InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => GamesDetailsScreen(
+                        id: gamesList[index]["id"].toString())));
+              },
+              child: Container(
+                color: grayBgColor,
+                margin: EdgeInsets.only(
+                    top: 10.0, left: 30.0, right: 30.0, bottom: 5.0),
+                padding: EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: lightGrayBgColor,
+                          shape: BoxShape.rectangle,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          )),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                      child: Image.asset(
+                        "assets/image/team3.png",
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.fill,
+                      ),
                     ),
-                  ),
-                  Icon(
-                    Icons.circle,
-                    color: lightGrayBgColor,
-                    size: 50,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: lightGrayBgColor,
-                        shape: BoxShape.rectangle,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10),
-                        )),
-                    padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    child: Image.asset(
-                      "assets/image/team2.png",
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.fill,
+                    Icon(
+                      Icons.circle,
+                      color: lightGrayBgColor,
+                      size: 50,
                     ),
-                  )
-                ],
+                    Container(
+                      decoration: BoxDecoration(
+                          color: lightGrayBgColor,
+                          shape: BoxShape.rectangle,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          )),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                      child: Image.asset(
+                        "assets/image/team2.png",
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.fill,
+                      ),
+                    )
+                  ],
+                ),
               ),
-            )  ,)
-
-             ;
+            );
           }),
     );
+  }
+
+  GetGameList(var id) async {
+    setState(() {
+      isLoading = true;
+      gamesList.clear();
+    });
+    var date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    var url = Uri.parse(CONSTANTS.baseUrl + CONSTANTS.fetchGames + date);
+    // print("URL : $url");
+    // print("data $data");
+    var response = await http.get(url);
+    // print("${response.statusCode}");
+    print("Response ${response.body}");
+    setState(() {
+      isLoading = false;
+    });
+    var res = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        gamesList = res;
+      });
+    } else if (response.statusCode == 400) {
+      showToast(res['message']);
+    } else if (response.statusCode == 401) {
+      showToast(res['message']);
+    } else {
+      print(res['message']);
+    }
+  }
+
+  GetGameYesterdayList(var id) async {
+    setState(() {
+      isLoading = true;
+      gamesList.clear();
+    });
+    var date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    var url = Uri.parse(CONSTANTS.baseUrl + CONSTANTS.fetchGames + date);
+    // print("URL : $url");
+    // print("data $data");
+    var response = await http.get(url);
+    // print("${response.statusCode}");
+    print("Response ${response.body}");
+    setState(() {
+      isLoading = false;
+    });
+    var res = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        gamesList = res;
+      });
+    } else if (response.statusCode == 400) {
+      showToast(res['message']);
+    } else if (response.statusCode == 401) {
+      showToast(res['message']);
+    } else {
+      print(res['message']);
+    }
+  }
+
+  GetGameTomarrowList(var id) async {
+    setState(() {
+      isLoading = true;
+      gamesList.clear();
+    });
+    var date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    var url = Uri.parse(CONSTANTS.baseUrl + CONSTANTS.fetchGames + date);
+    // print("URL : $url");
+    // print("data $data");
+    var response = await http.get(url);
+    // print("${response.statusCode}");
+    print("Response ${response.body}");
+    setState(() {
+      isLoading = false;
+    });
+    var res = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        gamesList = res;
+      });
+    } else if (response.statusCode == 400) {
+      showToast(res['message']);
+    } else if (response.statusCode == 401) {
+      showToast(res['message']);
+    } else {
+      print(res['message']);
+    }
   }
 }
