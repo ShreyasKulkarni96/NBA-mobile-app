@@ -5,21 +5,17 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:nbp/shimmerpage.dart';
 import 'package:nbp/utility/HelperClass.dart';
 import 'package:nbp/utility/colors.dart';
-import 'package:nbp/utility/colors.dart';
 import 'package:nbp/utility/textview/custom_textview.dart';
-import 'package:nbp/utility/textview/custom_textview.dart';
-import 'package:shimmer/shimmer.dart';
 
 import 'CONSTANTS.dart';
+import 'Model/Player.dart';
 
 class GamesDetailsScreen extends StatefulWidget {
-  var id;
+  var gameData;
 
-  GamesDetailsScreen({super.key, required this.id});
+  GamesDetailsScreen({super.key, required this.gameData});
 
   @override
   _GamesDetailsScreenState createState() => _GamesDetailsScreenState();
@@ -57,10 +53,17 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
       "abbreviation": "PHI"
     }
   };
+  List<Player> players = [];
+
+  bool isHomeTeamClicked = true, isVisitorsTeamClicked = false;
 
   late TabController tabController;
   bool isLoading = true;
   late Timer _timer;
+  List homeTeamStarters = [],
+      homeTeamBench = [],
+      visitorTeamStarters = [],
+      visitorTeamBench = [];
 
   @override
   void initState() {
@@ -70,7 +73,53 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
     tabController.addListener(() {
       tabController.index = 1;
     });
+    gameData = widget.gameData;
+
     Loading();
+    getData();
+  }
+
+  void getData() {
+    // Home team starters
+    homeTeamStarters =
+        gameData['home_team']['show_spoilers']['starters']['players'];
+    homeTeamStarters.forEach((player) {
+      players.add(Player.fromJson(player, _getPosition(player)));
+    });
+
+    // Home team bench
+    homeTeamBench = gameData['home_team']['show_spoilers']['bench']['players'];
+    homeTeamBench.forEach((player) {
+      players.add(Player.fromJson(player, 'Bench'));
+    });
+
+    // Visitor team starters
+    visitorTeamStarters =
+        gameData['visitor_team']['show_spoilers']['starters']['players'];
+    visitorTeamStarters.forEach((player) {
+      players.add(Player.fromJson(player, _getPosition(player)));
+    });
+
+    // Visitor team bench
+    visitorTeamBench =
+        gameData['visitor_team']['show_spoilers']['bench']['players'];
+    visitorTeamBench.forEach((player) {
+      players.add(Player.fromJson(player, 'Bench'));
+    });
+
+    // Now you have a list of Player objects
+    players.forEach((player) {
+      print('${player.fullName}: ${player.pts} points');
+    });
+  }
+
+  String _getPosition(Map<String, dynamic> player) {
+    if (player['PG'] == true) return 'PG';
+    if (player['SG'] == true) return 'SG';
+    if (player['SF'] == true) return 'SF';
+    if (player['PF'] == true) return 'PF';
+    if (player['C'] == true) return 'C';
+    return 'Unknown';
   }
 
   Future<void> Loading() async {
@@ -100,51 +149,6 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
           ),
           GamesDetailsWidegt(),
           GamesDetails2Widegt()
-          // TabBar(
-          //     onTap: (index) {
-          //       tabController.index = 1;
-          //     },
-          //     tabAlignment: TabAlignment.center,
-          //     labelColor: blackTextColor,
-          //     dividerColor: Colors.white,
-          //     indicatorColor: blackTextColor,
-          //     indicatorWeight: 3,
-          //     unselectedLabelColor: blackTextColor,
-          //     labelStyle: TextStyle(
-          //         fontSize: 18,
-          //         fontFamily: 'Inter',
-          //         color: blackTextColor,
-          //         fontWeight: FontWeight.w500),
-          //     unselectedLabelStyle: TextStyle(
-          //         fontSize: 18,
-          //         fontFamily: 'Inter',
-          //         color: blackTextColor,
-          //         fontWeight: FontWeight.w500),
-          //     isScrollable: true,
-          //     controller: tabController,
-          //     tabs: const <Widget>[
-          //       Tab(
-          //         text: " Yesterday ",
-          //       ),
-          //       Tab(
-          //         text: " Today ",
-          //       ),
-          //       Tab(
-          //         text: " Tomorrow ",
-          //       )
-          //     ]),
-          // const SizedBox(
-          //   height: 5,
-          // ),
-          // Expanded(
-          //     child: TabBarView(
-          //   controller: tabController,
-          //   children: <Widget>[
-          //     GamesYesterdaysListWidegt(),
-          //     isLoading ? const LoadingListPage() : GamesTodaysListWidegt(),
-          //     GamesTomarrowListWidegt(),
-          //   ],
-          // )),
         ],
       ),
     ));
@@ -172,8 +176,8 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                                 Radius.circular(10),
                               )),
                           padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                          child: Image.asset(
-                            "assets/image/team3.png",
+                          child: Image.network(
+                            gameData["home_team"]["image"].toString(),
                             width: 80,
                             height: 80,
                             fit: BoxFit.fill,
@@ -189,7 +193,7 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                           ),
                           padding: const EdgeInsets.all(8),
                           child: CustomTextView(
-                              title: '7.0',
+                              title: gameData["period"].toString(),
                               fontSize: 18.0,
                               fontWeight: FontWeight.w500,
                               color: Colors.black,
@@ -203,8 +207,8 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                                 Radius.circular(10),
                               )),
                           padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                          child: Image.asset(
-                            "assets/image/team2.png",
+                          child: Image.network(
+                            gameData["visitor_team"]["image"].toString(),
                             width: 80,
                             height: 80,
                             fit: BoxFit.fill,
@@ -271,8 +275,8 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                               child: ImageFiltered(
                                   imageFilter:
                                       ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                                  child: Image.asset(
-                                    "assets/image/team3.png",
+                                  child: Image.network(
+                                    gameData["home_team"]["image"].toString(),
                                     width: 80,
                                     height: 80,
                                     fit: BoxFit.fill,
@@ -293,7 +297,7 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                               padding:
                                   const EdgeInsets.fromLTRB(15, 10, 15, 10),
                               child: CustomTextView(
-                                  title: '110',
+                                  title: gameData["home_team_score"].toString(),
                                   fontSize: 30.0,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
@@ -311,7 +315,7 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                           ),
                           padding: const EdgeInsets.all(8),
                           child: CustomTextView(
-                              title: '7.0',
+                              title: gameData["period"].toString(),
                               fontSize: 22.0,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
@@ -331,8 +335,9 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                               child: ImageFiltered(
                                   imageFilter:
                                       ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                                  child: Image.asset(
-                                    "assets/image/team2.png",
+                                  child: Image.network(
+                                    gameData["visitor_team"]["image"]
+                                        .toString(),
                                     width: 80,
                                     height: 80,
                                     fit: BoxFit.fill,
@@ -353,7 +358,8 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                               padding:
                                   const EdgeInsets.fromLTRB(15, 10, 15, 10),
                               child: CustomTextView(
-                                  title: '102',
+                                  title:
+                                      gameData["visitor_team_score"].toString(),
                                   fontSize: 30.0,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
@@ -458,7 +464,8 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomTextView(
-                        title: 'Winner',
+                        title: 'Winner : '+ gameData["home_team"]["name"]
+                            .toString(),
                         fontSize: 18.0,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
@@ -472,102 +479,6 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                         textAlign: TextAlign.center),
-                    // const SizedBox(
-                    //   height: 8,
-                    // ),
-                    // CustomTextView(
-                    //     title: 'Leading Scorer',
-                    //     fontSize: 18.0,
-                    //     fontWeight: FontWeight.w500,
-                    //     color: Colors.black,
-                    //     textAlign: TextAlign.center),
-                    // Container(
-                    //     color: lightGrayBgColor,
-                    //     margin: const EdgeInsets.only(
-                    //         top: 5.0, left: 5.0, right: 5.0, bottom: 0.0),
-                    //     padding: const EdgeInsets.only(
-                    //         top: 5.0, left: 20.0, right: 12.0, bottom: 5.0),
-                    //     child: Column(
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Row(
-                    //           mainAxisAlignment: MainAxisAlignment.start,
-                    //           crossAxisAlignment: CrossAxisAlignment.center,
-                    //           children: [
-                    //             Column(
-                    //               children: [
-                    //                 CustomTextView(
-                    //                     title: 'SAC',
-                    //                     fontSize: 18.0,
-                    //                     fontWeight: FontWeight.w500,
-                    //                     color: Colors.black,
-                    //                     textAlign: TextAlign.center),
-                    //                 Container(
-                    //                   height: 4,
-                    //                   width: 35,
-                    //                   child: Divider(
-                    //                     height: 3,
-                    //                     color: lightGrayBgColor,
-                    //                   ),
-                    //                 )
-                    //               ],
-                    //             ),
-                    //             const SizedBox(
-                    //               width: 10,
-                    //             ),
-                    //             Column(
-                    //               children: [
-                    //                 CustomTextView(
-                    //                     title: 'DET',
-                    //                     fontSize: 18.0,
-                    //                     fontWeight: FontWeight.w500,
-                    //                     color: Colors.black,
-                    //                     textAlign: TextAlign.center),
-                    //                 Container(
-                    //                   height: 4,
-                    //                   width: 35,
-                    //                   child: Divider(
-                    //                     height: 3,
-                    //                     color: Colors.grey.shade800,
-                    //                   ),
-                    //                 )
-                    //               ],
-                    //             ),
-                    //           ],
-                    //         ),
-                    //         Padding(
-                    //           padding: const EdgeInsets.only(left: 20.0),
-                    //           child: CustomTextView(
-                    //               title: 'J. Ivey',
-                    //               fontSize: 16.0,
-                    //               fontWeight: FontWeight.w500,
-                    //               color: Colors.black,
-                    //               textAlign: TextAlign.start),
-                    //         )
-                    //       ],
-                    //     )),
-                    // const SizedBox(
-                    //   height: 8,
-                    // ),
-                    // CustomTextView(
-                    //     title: 'Free Throws',
-                    //     fontSize: 18.0,
-                    //     fontWeight: FontWeight.w500,
-                    //     color: Colors.black,
-                    //     textAlign: TextAlign.center),
-                    // const SizedBox(
-                    //   height: 8,
-                    // ),
-                    // CustomTextView(
-                    //     title: 'Turnovers',
-                    //     fontSize: 18.0,
-                    //     fontWeight: FontWeight.w500,
-                    //     color: Colors.black,
-                    //     textAlign: TextAlign.center),
-                    // const SizedBox(
-                    //   height: 8,
-                    // ),
                     CustomTextView(
                         title: 'Score Differential',
                         fontSize: 18.0,
@@ -583,6 +494,7 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                         textAlign: TextAlign.center),
+                    QuarterSummaryDataTable()
                   ],
                 ),
               )
@@ -599,67 +511,72 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          children: [
-                            CustomTextView(
-                                title: 'SAC',
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                textAlign: TextAlign.center),
-                            Container(
-                              height: 4,
-                              width: 35,
-                              child: Divider(
-                                height: 3,
-                                color: grayBgColor,
-                              ),
-                            )
-                          ],
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                isVisitorsTeamClicked = false;
+                                isHomeTeamClicked = true;
+                              });
+                            },
+                            child: Column(
+                              children: [
+                                CustomTextView(
+                                    title: gameData["home_team"]["name"]
+                                        .toString(),
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    textAlign: TextAlign.center),
+                                Container(
+                                  height: 4,
+                                  width: 100,
+                                  child: Divider(
+                                    height: 3,
+                                    color: isHomeTeamClicked
+                                        ? Colors.grey.shade800
+                                        : grayBgColor,
+                                  ),
+                                )
+                              ],
+                            )),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isVisitorsTeamClicked = true;
+                              isHomeTeamClicked = false;
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              CustomTextView(
+                                  title: gameData["visitor_team"]["name"]
+                                      .toString(),
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  textAlign: TextAlign.center),
+                              Container(
+                                height: 4,
+                                width: 100,
+                                child: Divider(
+                                  height: 3,
+                                  color: isVisitorsTeamClicked
+                                      ? Colors.grey.shade800
+                                      : grayBgColor,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                        Column(
-                          children: [
-                            CustomTextView(
-                                title: 'DET',
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                textAlign: TextAlign.center),
-                            Container(
-                              height: 4,
-                              width: 50,
-                              child: Divider(
-                                height: 3,
-                                color: Colors.grey.shade800,
-                              ),
-                            )
-                          ],
-                        ),
-                        // Column(
-                        //   children: [
-                        //     CustomTextView(
-                        //         title: 'DET',
-                        //         fontSize: 20.0,
-                        //         fontWeight: FontWeight.bold,
-                        //         color: Colors.black,
-                        //         textAlign: TextAlign.center),
-                        //     Container(
-                        //       height: 5,
-                        //       width: 45,
-                        //       child: Divider(
-                        //         height: 4,
-                        //         color: grayBgColor,
-                        //       ),
-                        //     )
-                        //   ],
-                        // ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    PlayersStatsTable(),
-                    PlayersStatsTable2()
+                    if (isHomeTeamClicked) HomePlayerStartersTable(),
+                    if (isHomeTeamClicked) HomePlayersBenchTable(),
+                    if (isVisitorsTeamClicked) VisitorsPlayerStartersTable(),
+                    if (isVisitorsTeamClicked) VisitorsPlayersBenchTable()
                   ],
                 ),
               ),
@@ -672,8 +589,7 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
       isLoading = true;
     });
     var url = Uri.parse(CONSTANTS.baseUrl + CONSTANTS.fetchGameData);
-    // print("URL : $url");
-    // print("data $data");
+
     var response = await http.get(url);
     // print("${response.statusCode}");
     print("Response ${response.body}");
@@ -699,8 +615,9 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
     setState(() {
       isLoading = true;
     });
-    var url =
-        Uri.parse(CONSTANTS.baseUrl + CONSTANTS.fetchGamesDetailsById + widget.id);
+    var url = Uri.parse(CONSTANTS.baseUrl +
+        CONSTANTS.fetchGamesDetailsById +
+        gameData["id"].toString());
     // print("URL : $url");
     // print("data $data");
     var response = await http.get(url);
@@ -722,6 +639,546 @@ class _GamesDetailsScreenState extends State<GamesDetailsScreen>
     } else {
       print(res['message']);
     }
+  }
+
+  Widget HomePlayerStartersTable() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        // decoration: BoxDecoration(
+        //   color: lightGrayBgColor,
+        // ),
+        border: TableBorder.all(color: Colors.grey.shade600),
+        dataRowColor: MaterialStateProperty.all(Colors.white),
+        headingRowColor: MaterialStateProperty.all(lightGrayBgColor),
+        columns: const [
+          DataColumn(
+              label: Text(
+            'STARTERS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'MIN',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'PTS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'REB',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'AST',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'STL',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+        ],
+        rows: [
+          for (int i = 0; i < homeTeamStarters.length; i++)
+            DataRow(cells: [
+              DataCell(Text(
+                homeTeamStarters[i]["full_name"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamStarters[i]["min"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamStarters[i]["pts"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamStarters[i]["reb"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamStarters[i]["ast"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamStarters[i]["stl"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+            ]),
+        ],
+      ),
+    );
+  }
+
+  Widget HomePlayersBenchTable() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        // decoration: BoxDecoration(
+        //   color: lightGrayBgColor,
+        // ),
+        border: TableBorder.all(color: Colors.grey.shade600),
+        dataRowColor: MaterialStateProperty.all(Colors.white),
+        headingRowColor: MaterialStateProperty.all(lightGrayBgColor),
+        columns: const [
+          DataColumn(
+              label: Text(
+            'BENCH',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'MIN',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'PTS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'REB',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'AST',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'STL',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+        ],
+        rows: [
+          for (int i = 0; i < homeTeamBench.length; i++)
+            DataRow(cells: [
+              DataCell(Text(
+                homeTeamBench[i]["full_name"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamBench[i]["min"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamBench[i]["pts"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamBench[i]["reb"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamBench[i]["ast"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                homeTeamBench[i]["stl"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+            ]),
+        ],
+      ),
+    );
+  }
+
+  Widget VisitorsPlayerStartersTable() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        // decoration: BoxDecoration(
+        //   color: lightGrayBgColor,
+        // ),
+        border: TableBorder.all(color: Colors.grey.shade600),
+        dataRowColor: MaterialStateProperty.all(Colors.white),
+        headingRowColor: MaterialStateProperty.all(lightGrayBgColor),
+        columns: const [
+          DataColumn(
+              label: Text(
+            'STARTERS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'MIN',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'PTS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'REB',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'AST',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'STL',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+        ],
+        rows: [
+          for (int i = 0; i < visitorTeamStarters.length; i++)
+            DataRow(cells: [
+              DataCell(Text(
+                visitorTeamStarters[i]["full_name"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamStarters[i]["min"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamStarters[i]["pts"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamStarters[i]["reb"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamStarters[i]["ast"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamStarters[i]["stl"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+            ]),
+        ],
+      ),
+    );
+  }
+
+  Widget VisitorsPlayersBenchTable() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        // decoration: BoxDecoration(
+        //   color: lightGrayBgColor,
+        // ),
+        border: TableBorder.all(color: Colors.grey.shade600),
+        dataRowColor: MaterialStateProperty.all(Colors.white),
+        headingRowColor: MaterialStateProperty.all(lightGrayBgColor),
+        columns: const [
+          DataColumn(
+              label: Text(
+            'BENCH',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'MIN',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'PTS',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'REB',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'AST',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+          DataColumn(
+              label: Text(
+            'STL',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11.5,
+                color: Colors.black,
+                fontFamily: 'Inter'),
+          )),
+        ],
+        rows: [
+          for (int i = 0; i < visitorTeamBench.length; i++)
+            DataRow(cells: [
+              DataCell(Text(
+                visitorTeamBench[i]["full_name"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamBench[i]["min"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamBench[i]["pts"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamBench[i]["reb"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamBench[i]["ast"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+              DataCell(Text(
+                visitorTeamBench[i]["stl"].toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'),
+              )),
+            ]),
+        ],
+      ),
+    );
   }
 }
 
@@ -1059,7 +1516,7 @@ class PlayersStatsTable extends StatelessWidget {
       child: Text(
         content,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 11.5,
             color: Colors.black,
@@ -1158,7 +1615,7 @@ class PlayersStatsTable1 extends StatelessWidget {
   TableRow tableRow(String name, String name2, String min, String pts,
       String reb, String ast, String stl) {
     return TableRow(
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(color: Colors.white),
       children: [
         tableCell1(name, name2),
         tableCell(min),
@@ -1176,7 +1633,7 @@ class PlayersStatsTable1 extends StatelessWidget {
       child: Text(
         content,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 11.5,
             color: Colors.black,
@@ -1547,11 +2004,123 @@ class PlayersStatsTable2 extends StatelessWidget {
       child: Text(
         content,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 11.5,
             color: Colors.black,
             fontFamily: 'Inter'),
+      ),
+    );
+  }
+}
+
+
+class QuarterSummaryDataTable extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        border: TableBorder.symmetric(
+            outside: BorderSide(color: Colors.grey.shade600)),
+        dataRowColor: MaterialStateProperty.all(Colors.white),
+        headingRowColor: MaterialStateProperty.all(Colors.white),
+        columns: [
+          DataColumn(label: Text('  ')),
+          DataColumn(label: Text('Q1')),
+          DataColumn(label: Text('Q2')),
+          DataColumn(label: Text('Q3')),
+          DataColumn(label: Text('Q4')),
+          DataColumn(label: Text('T')),
+
+
+        ],
+        rows: [
+          DataRow(cells: [
+
+            DataCell(Image.asset(
+              "assets/image/team2.png",
+              width: 20,
+              height: 20,
+            )),
+            DataCell(Text('20',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+
+            DataCell(Text('22',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+
+            DataCell(Text('24',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('26',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('86',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+          ]),
+
+          DataRow(cells: [
+
+            DataCell(Image.asset(
+              "assets/image/team3.png",
+              width: 20,
+              height: 20,
+            )),
+            DataCell(Text('37',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+
+            DataCell(Text('26',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+
+            DataCell(Text('23',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+            DataCell(Text('21',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+
+            DataCell(Text('107',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.5,
+                    color: Colors.black,
+                    fontFamily: 'Inter'))),
+          ]),
+
+          // Add more rows as needed
+        ],
       ),
     );
   }

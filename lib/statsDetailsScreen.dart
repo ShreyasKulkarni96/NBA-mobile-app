@@ -2,15 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:nbp/utility/colors.dart';
-import 'package:nbp/utility/textview/custom_textview.dart';
 import 'package:http/http.dart' as http;
-import 'package:nbp/shimmerpage.dart';
 import 'package:nbp/utility/HelperClass.dart';
 import 'package:nbp/utility/colors.dart';
 import 'package:nbp/utility/textview/custom_textview.dart';
 
 import 'CONSTANTS.dart';
+
 class StatssDetailsScreen extends StatefulWidget {
   @override
   _StatssDetailsScreenState createState() => _StatssDetailsScreenState();
@@ -22,7 +20,11 @@ class _StatssDetailsScreenState extends State<StatssDetailsScreen>
   bool isLoading = true;
   late Timer _timer;
 
-var  statsList=[];
+  var statsList = [];
+  bool isConfrenceClicked = true,
+      isTeamsClicked = false,
+      isPlayersClicked = false;
+  bool isWestClicked = false, isEastClicked = true;
 
   @override
   void initState() {
@@ -73,59 +75,92 @@ var  statsList=[];
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        CustomTextView(
-                            title: 'Conference',
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            textAlign: TextAlign.center),
-                        Container(
-                          height: 4,
-                          width: 100,
-                          child: Divider(
-                            height: 3,
-                            color: Colors.black,
-                          ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        CustomTextView(
-                            title: 'Teams',
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            textAlign: TextAlign.center),
-                        Container(
-                          height: 4,
-                          width: 50,
-                          child: Divider(
-                            height: 3,
-                            color: grayBgColor,
-                          ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        CustomTextView(
-                            title: 'Players',
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            textAlign: TextAlign.center),
-                        Container(
-                          height: 5,
-                          width: 45,
-                          child: Divider(
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isConfrenceClicked = true;
+                          isTeamsClicked = false;
+                          isPlayersClicked = false;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          CustomTextView(
+                              title: 'Conference',
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              textAlign: TextAlign.center),
+                          Container(
                             height: 4,
-                            color: grayBgColor,
-                          ),
-                        )
-                      ],
+                            width: 100,
+                            child: Divider(
+                              height: 3,
+                              color: isConfrenceClicked
+                                  ? Colors.grey.shade800
+                                  : grayBgColor,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isConfrenceClicked = false;
+                          isTeamsClicked = true;
+                          isPlayersClicked = false;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          CustomTextView(
+                              title: 'Teams',
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              textAlign: TextAlign.center),
+                          Container(
+                            height: 4,
+                            width: 100,
+                            child: Divider(
+                              height: 3,
+                              color: isTeamsClicked
+                                  ? Colors.grey.shade800
+                                  : grayBgColor,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isConfrenceClicked = false;
+                          isTeamsClicked = false;
+                          isPlayersClicked = true;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          CustomTextView(
+                              title: 'Players',
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              textAlign: TextAlign.center),
+                          Container(
+                            height: 5,
+                            width: 100,
+                            child: Divider(
+                              height: 4,
+                              color: isPlayersClicked
+                                  ? Colors.grey.shade800
+                                  : grayBgColor,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -148,41 +183,60 @@ var  statsList=[];
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        CustomTextView(
-                            title: 'West',
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            textAlign: TextAlign.center),
-                        Container(
-                          height: 4,
-                          width: 35,
-                          child: Divider(
-                            height: 3,
-                            color: lightGrayBgColor,
-                          ),
-                        )
-                      ],
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isEastClicked = false;
+                          isWestClicked = true;
+                        });
+                      },                      child: Column(
+                        children: [
+                          CustomTextView(
+                              title: 'West',
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              textAlign: TextAlign.center),
+                          Container(
+                            height: 4,
+                            width: 100,
+                            child: Divider(
+                              height: 3,
+                              color: isWestClicked
+                                  ? Colors.grey.shade800
+                                  : lightGrayBgColor,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        CustomTextView(
-                            title: 'East',
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            textAlign: TextAlign.center),
-                        Container(
-                          height: 4,
-                          width: 50,
-                          child: Divider(
-                            height: 3,
-                            color: Colors.grey.shade800,
-                          ),
-                        )
-                      ],
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isEastClicked = true;
+                          isWestClicked = false;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          CustomTextView(
+                              title: 'East',
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              textAlign: TextAlign.center),
+                          Container(
+                            height: 4,
+                            width: 100,
+                            child: Divider(
+                              height: 3,
+                              color: isEastClicked
+                                  ? Colors.grey.shade800
+                                  : lightGrayBgColor,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                     // Column(
                     //   children: [
@@ -213,7 +267,8 @@ var  statsList=[];
           SizedBox(
             height: 10,
           ),
-          ScrollableDataTable()
+          isEastClicked?
+          ScrollableDataTable():SizedBox()
         ],
       ),
     ));
@@ -246,7 +301,6 @@ var  statsList=[];
       print(res['message']);
     }
   }
-
 }
 
 class ScrollableDataTable extends StatelessWidget {
@@ -255,7 +309,8 @@ class ScrollableDataTable extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
-        border: TableBorder.symmetric(outside: BorderSide(color:Colors.grey.shade600) ),
+        border: TableBorder.symmetric(
+            outside: BorderSide(color: Colors.grey.shade600)),
         dataRowColor: MaterialStateProperty.all(Colors.white),
         headingRowColor: MaterialStateProperty.all(Colors.white),
         columns: [
@@ -297,7 +352,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Boston Celtics',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -338,7 +397,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Denver Nuggets',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -379,7 +442,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Oklahoma City Thunder',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -420,7 +487,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Boston Celtics',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -461,7 +532,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Denver Nuggets',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -502,7 +577,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Oklahoma City Thunder',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -543,7 +622,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Boston Celtics',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -584,7 +667,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Denver Nuggets',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -625,7 +712,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Oklahoma City Thunder',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -666,7 +757,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Boston Celtics',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -707,7 +802,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Denver Nuggets',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -748,7 +847,11 @@ class ScrollableDataTable extends StatelessWidget {
                     fontSize: 11.5,
                     color: Colors.black,
                     fontFamily: 'Inter'))),
-            DataCell(Image.asset("assets/image/person.png",width: 20,height: 20,)),
+            DataCell(Image.asset(
+              "assets/image/person.png",
+              width: 20,
+              height: 20,
+            )),
             DataCell(Text('Oklahoma City Thunder',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,

@@ -76,7 +76,8 @@ class _TeamsScreenState extends State<TeamsScreen>
     tabController.addListener(() {
       tabController.index = 1;
     });
-    GetTeamsList();
+    Loading();
+    // GetTeamsList();
   }
 
   Future<void> Loading() async {
@@ -180,7 +181,7 @@ class _TeamsScreenState extends State<TeamsScreen>
                               setState(() {
                                 teamsList[index]["isSelected"] = false;
 
-                                GetPlayerList(teamsList[index]["id"]);
+                                // GetPlayerList(teamsList[index]["id"]);
                               });
                             },
                             child: const Icon(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CONSTANTS {
-  static String baseUrl = "/";
+  static String baseUrl = "http://localhost:8081/";
 
 
   //Games Screen
